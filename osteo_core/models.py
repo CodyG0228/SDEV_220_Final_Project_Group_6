@@ -20,3 +20,15 @@ class Horse(models.Model):
 
     def __str__(self):
         return f"{self.name} (Owner: {self.owner.first_name} {self.owner.last_name})"
+    
+class Appointment(models.Model):
+    horse = models.ForeignKey(Horse, on_delete=models.CASCADE, related_name='appointments')
+    date_and_time =  models.DateTimeField()
+    reason_for_visit = models.CharField(max_length=200, blank=True)
+    notes = models.TextField(blank=True)
+
+    is_completed = models.BooleanField(default=False)
+    #client_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.horse.name} - {self.date_and_time.strftime('%b %d, %Y at %I:%M %p')}"
