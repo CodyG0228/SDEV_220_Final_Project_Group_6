@@ -22,6 +22,12 @@ class Horse(models.Model):
         return f"{self.name} (Owner: {self.owner.first_name} {self.owner.last_name})"
     
 class Appointment(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending Request'),
+        ('Confirmed', 'Confirmed'),
+        ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled'),
+    ]
     horse = models.ForeignKey(Horse, on_delete=models.CASCADE, related_name='appointments')
     date_and_time =  models.DateTimeField()
     reason_for_visit = models.CharField(max_length=200, blank=True)
@@ -29,6 +35,8 @@ class Appointment(models.Model):
 
     is_completed = models.BooleanField(default=False)
     #client_paid = models.BooleanField(default=False)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
 
     def __str__(self):
         return f"{self.horse.name} - {self.date_and_time.strftime('%b %d, %Y at %I:%M %p')}"
