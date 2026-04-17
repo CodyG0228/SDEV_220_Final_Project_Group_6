@@ -1,17 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OsteoPlanner - Home</title>
+    <title>HOME - DASHBOARD</title>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        #calendar { max-width: 900px; margin: 0 auto; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; }
+    </style>
 </head>
 <body>
-    <h1>OsteoPlanner - Dashboard</h1>
-    <p>Yes, it worked. Good job.</p>
+    <div class="header-container">
+        <h1>DASHBOARD</h1>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    </div>
+    
+    <hr>
+    
+    <div id='calendar'></div>
 
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Log Out</button>
-    </form>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'timeGridWeek',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          events: [
+            {
+                title: 'Test: Shadow (Confirmed)',
+                start: '2026-04-17T10:00:00',
+                end: '2026-04-17T11:00:00',
+                color: 'green'
+            }
+          ]
+        });
+        
+        calendar.render();
+      });
+    </script>
 </body>
 </html>
