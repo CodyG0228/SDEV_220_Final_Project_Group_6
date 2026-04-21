@@ -1,0 +1,15 @@
+body {
+    background-image: url("login.jpg"); background-repeat: no-repeat;
+}
+
+h2 {
+    font-family: Arial, Helvetica, sans-serif; font-size: 100px; text-align: center;
+}
+
+form {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
