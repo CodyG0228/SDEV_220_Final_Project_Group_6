@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from .models import Appointment
 from datetime import timedelta
+from .forms import AppointmentRequestForm
 
 def appointment_api(request):
     appointments = Appointment.objects.filter(status='Confirmed')
@@ -14,3 +15,14 @@ def appointment_api(request):
             'color': '#28a745'
         })
     return JsonResponse(events, safe=False)
+
+def request_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentRequestForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = AppointmentRequestForm()
+    
+    return render(request, 'request_appointment.html', {'form': form})
