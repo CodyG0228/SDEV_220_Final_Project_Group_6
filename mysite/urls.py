@@ -10,4 +10,7 @@ urlpatterns = [
     path('accounts/', include('users.urls')),
     path('api/appointments/', osteo_views.appointment_api, name='appointment_api'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('appointment/<int:pk>/approve/', osteo_views.approve_appointment, name='approve_appointment'),
+    path('request-appointment/', osteo_views.request_appointment, name='request_appointment'),
+    path('', osteo_views.dashboard_view, name='home'),
 ]

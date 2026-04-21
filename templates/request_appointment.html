@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REQUEST APPOINTMENT</title>
+    <!--link rel="stylesheet" href="{% static 'css/styles.css' %}"-->
+</head>
+<body>
+    <div style="max-width: 600px; margin: 40px auto; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+        <h2>Request an Appointment</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }} 
+            
+            <button type="submit" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                Submit Request
+            </button>
+        </form>
+        
+        <br>
+        <a href="{% url 'home' %}">Back to Dashboard</a>
+    </div>
+</body>
+</html>
