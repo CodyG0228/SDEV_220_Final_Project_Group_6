@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import JSONField
 
 class Client(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
@@ -42,3 +43,13 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.horse.name} - {self.date_and_time.strftime('%b %d, %Y at %I:%M %p')}"
+
+class Assessment(models.Model):
+    appointment = models.OneToOneField(Appointment, on_delete=models.CASCADE, related_name='assessment')
+    horse = models.ForeignKey(Horse, on_delete=models.CASCADE, related_name='assessments')
+    date_performed = models.DateTimeField(auto_now_add=True)
+    assessment_data = models.JSONField(default=dict)
+    general_notes = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Assessment: {self.horse.name} ({self.date_performed.strftime('%Y-%m-%d')})"
