@@ -1,7 +1,9 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from datetime import timedelta
-from .models import Appointment, Horse
+from .models import Appointment, Horse, Assessment
 from .forms import AppointmentRequestForm
 
 def dashboard_view(request):
@@ -45,3 +47,30 @@ def horse_detail(request, pk):
     horse = get_object_or_404(Horse, pk=pk)
     appointments = horse.appointments.all().order_by('-date_and_time')
     return render(request, 'horse_detail.html', {'horse': horse, 'appointments': appointments})
+
+def create_assessment(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if hasattr(appointment, 'assessment'):
+        return redirect('horse_detail', pk=appointment.horse.pk)
+
+    if request.method == 'POST':
+        raw_json_string = request.POST.get('assessment_data', '{}')
+        
+        try:
+            assessment_dict = json.loads(raw_json_string)
+        except json.JSONDecodeError:
+            assessment_dict = {}
+            
+        notes = request.POST.get('general_notes', '')
+
+        Assessment.objects.create(
+            appointment=appointment,
+            horse=appointment.horse,
+            assessment_data=assessment_dict,
+            general_notes=notes
+        )
+        
+        return redirect('horse_detail', pk=appointment.horse.pk)
+
+    return render(request, 'assessment_form.html', {'appointment': appointment})

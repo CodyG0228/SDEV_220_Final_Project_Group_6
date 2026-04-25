@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ horse.name }} - Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .profile-container { max-width: 800px; margin: 40px auto; padding: 20px; background: white; border: 1px solid #ddd; border-radius: 8px; }
+        .appt-card { background: #f8f9fa; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 15px; border-radius: 4px; }
+        .appt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .btn-small { background: #17a2b8; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em; }
+        .btn-small:hover { background: #138496; }
+        .assessment-box { background: white; border: 1px solid #ccc; padding: 15px; margin-top: 10px; border-radius: 4px; font-size: 0.95em; }
+        .region-title { text-transform: capitalize; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        
+        <h1>{{ horse.name }}</h1>
+        <p><strong>Owner:</strong> {{ horse.owner.first_name }} {{ horse.owner.last_name }}</p>
+        <p><strong>Breed:</strong> {{ horse.breed|default:"Not specified" }}</p>
+        <p><strong>Age:</strong> {{ horse.age|default:"Unknown" }}</p>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>Appointment History</h3>
+        
+        <div>
+            {% for appt in appointments %}
+                <div class="appt-card">
+                    <div class="appt-header">
+                        <strong>{{ appt.date_and_time|date:"F d, Y - g:i A" }}</strong>
+                        <span style="color: #666;">Status: {{ appt.status }}</span>
+                    </div>
+                    
+                    {% if appt.reason_for_visit %}
+                        <p style="margin: 0 0 10px 0;"><em>Reason: {{ appt.reason_for_visit }}</em></p>
+                    {% endif %}
+
+                    {% if appt.assessment %}
+                        <div class="assessment-box">
+                            <h4 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px;">Assessment Record</h4>
+                            
+                            {% for region, findings in appt.assessment.assessment_data.items %}
+                                <p style="margin: 5px 0;">
+                                    <strong class="region-title">{{ region|replace:"_"|title }}:</strong> 
+                                    {{ findings|join:", " }}
+                                </p>
+                            {% endfor %}
+                            
+                            {% if appt.assessment.general_notes %}
+                                <hr style="border: 0.5px dashed #ccc; margin: 10px 0;">
+                                <p style="margin: 0;"><strong>Notes:</strong> {{ appt.assessment.general_notes }}</p>
+                            {% endif %}
+                        </div>
+
+                    {% elif appt.status == 'Confirmed' %}
+                        <div style="margin-top: 10px;">
+                            <a href="{% url 'create_assessment' appt.id %}" class="btn-small">📝 Create Assessment</a>
+                        </div>
+                    {% endif %}
+                    
+                </div>
+            {% empty %}
+                <p>No appointments on record.</p>
+            {% endfor %}
+        </div>
+
+        <br>
+        <a href="{% url 'home' %}" style="display: inline-block; margin-top: 20px;">&larr; Back to Dashboard</a>
+    </div>
+</body>
+</html>

@@ -2,52 +2,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <title>HOME - DASHBOARD</title>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    {% if request.user.is_staff %}
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    {% endif %}
     
-    <!--style>
+    <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
-        #calendar { max-width: 900px; margin: 0 auto; }
         .header-container { display: flex; justify-content: space-between; align-items: center; }
-    </style-->
+        .dashboard-container { display: flex; gap: 30px; margin-top: 20px; align-items: flex-start; }
+        .calendar-section { flex: 2; width: 100%; }
+        .sidebar { flex: 1; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #ddd; width: 100%; }
+        .pending-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #ffc107; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* New styling for the client portal */
+        .client-portal { max-width: 600px; margin: 60px auto; text-align: center; background: #f8f9fa; padding: 40px; border-radius: 8px; border: 1px solid #ddd; }
+        .btn-large { display: inline-block; background: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-size: 1.2em; margin-top: 20px; }
+        .btn-large:hover { background: #0056b3; }
+    </style>
 </head>
 <body>
     <div class="header-container">
         <h1>DASHBOARD</h1>
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
-            <button type="submit">Log Out</button>
+            <button type="submit" style="padding: 8px 16px; cursor: pointer;">Log Out</button>
         </form>
     </div>
     
     <hr>
     
-    <div id='calendar'></div>
-    
-    <div class="sidebar">
-
-
-    
-    </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+    {% if request.user.is_staff %}
         
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'timeGridWeek',
-          headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          },
-          events: '{% url "appointment_api" %}'
-        });
-        
-        calendar.render();
-      });
-    </script>
+        <div class="dashboard-container">
+            <div class="calendar-section">
+                <div id='calendar'></div>
+            </div>
+            
+            <div class="sidebar">
+                <h2 style="margin-top: 0; color: #333;">Pending Requests</h2>
+                {% for appt in pending_requests %}
+                    <div class="pending-card">
+                        <div>
+                            <strong style="font-size: 1.1em;">
+                                <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #007bff; text-decoration: none;">{{ appt.horse.name }}</a>
+                            </strong>
+                            <p style="margin: 5px 0 0 0; color: #555;">
+                                {{ appt.date_and_time|date:"F d, Y - g:i A" }}
+                                <br>
+                                <small>Reason: {{ appt.reason_for_visit|default:"None provided" }}</small>
+                            </p>
+                        </div>
+                        <form action="{% url 'approve_appointment' appt.id %}" method="post" style="margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                ✓ Approve
+                            </button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <p style="color: #666; font-style: italic;">No pending appointment requests.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: 'timeGridWeek',
+              headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              },
+              events: '{% url "appointment_api" %}'
+            });
+            calendar.render();
+          });
+        </script>
+
+    {% else %}
+
+        <div class="client-portal">
+            <h2>Welcome to the Portal!</h2>
+            <p style="color: #555; font-size: 1.1em;">You can request a new osteopathy assessment for your horse below.</p>
+            
+            <a href="{% url 'request_appointment' %}" class="btn-large">
+                Request an Appointment
+            </a>
+        </div>
+
+    {% endif %}
+
 </body>
 </html>
