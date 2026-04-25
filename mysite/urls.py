@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
@@ -9,12 +8,10 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('users.urls')),
     path('api/appointments/', osteo_views.appointment_api, name='appointment_api'),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('appointment/<int:pk>/approve/', osteo_views.approve_appointment, name='approve_appointment'),
-    path('request-appointment/', osteo_views.request_appointment, name='request_appointment'),
-    path('request-success/', TemplateView.as_view(template_name='request_success.html'), name='request_success'),
     path('', osteo_views.dashboard_view, name='home'),
+    path('horse/<int:pk>/', osteo_views.horse_detail, name='horse_detail'),
     path('appointment/<int:pk>/approve/', osteo_views.approve_appointment, name='approve_appointment'),
     path('appointment/<int:pk>/assessment/new/', osteo_views.create_assessment, name='create_assessment'),
     path('request-appointment/', osteo_views.request_appointment, name='request_appointment'),
+    path('request-success/', TemplateView.as_view(template_name='request_success.html'), name='request_success'),
 ]

@@ -7,8 +7,11 @@ from .models import Appointment, Horse, Assessment
 from .forms import AppointmentRequestForm
 
 def dashboard_view(request):
-    pending_requests = Appointment.objects.filter(status='Pending').order_by('date_and_time')
-    return render(request, 'home.html', {'pending_requests': pending_requests})
+    if request.user.is_staff:
+        pending_requests = Appointment.objects.filter(status='Pending', practitioner=request.user).order_by('date_and_time')
+        return render(request, 'home.html', {'pending_requests': pending_requests})
+    else:
+        return render(request, 'home.html')
 
 def approve_appointment(request, pk):
     if request.method == 'POST':
@@ -18,7 +21,7 @@ def approve_appointment(request, pk):
     return redirect('home')
 
 def appointment_api(request):
-    appointments = Appointment.objects.filter(status='Confirmed')
+    appointments = Appointment.objects.filter(status='Confirmed', practitioner=request.user)
     
     events = []
     for appt in appointments:

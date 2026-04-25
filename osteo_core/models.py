@@ -39,6 +39,14 @@ class Appointment(models.Model):
     is_completed = models.BooleanField(default=False)
     #client_paid = models.BooleanField(default=False)
 
+    practitioner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        limit_choices_to={'is_staff': True}, # Only show staff members in the dropdown!
+        related_name='practitioner_appointments',
+        null=True # Temporarily allow this to be null so your old test data doesn't crash the database
+    )
+
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
 
     def __str__(self):
@@ -50,6 +58,6 @@ class Assessment(models.Model):
     date_performed = models.DateTimeField(auto_now_add=True)
     assessment_data = models.JSONField(default=dict)
     general_notes = models.TextField(blank=True, null=True)
-    
+
     def __str__(self):
         return f"Assessment: {self.horse.name} ({self.date_performed.strftime('%Y-%m-%d')})"
