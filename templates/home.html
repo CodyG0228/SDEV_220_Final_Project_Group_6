@@ -4,34 +4,38 @@
 <head>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <title>HOME - DASHBOARD</title>
+    
     {% if request.user.is_staff %}
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     {% endif %}
     
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f7f6; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .dashboard-container { display: flex; gap: 30px; margin-top: 20px; align-items: flex-start; }
-        .calendar-section { flex: 2; width: 100%; }
-        .sidebar { flex: 1; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #ddd; width: 100%; }
-        .pending-card { background: white; padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #ffc107; display: flex; justify-content: space-between; align-items: center; }
+        .calendar-section { flex: 2; width: 100%; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .sidebar { flex: 1; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .pending-card { background: #fafafa; padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #ffc107; display: flex; justify-content: space-between; align-items: center; border-right: 1px solid #eee; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
         
-        /* New styling for the client portal */
-        .client-portal { max-width: 600px; margin: 60px auto; text-align: center; background: #f8f9fa; padding: 40px; border-radius: 8px; border: 1px solid #ddd; }
-        .btn-large { display: inline-block; background: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-size: 1.2em; margin-top: 20px; }
-        .btn-large:hover { background: #0056b3; }
+        /* New Client Portal Styles */
+        .client-portal { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .portal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 15px; margin-bottom: 25px; }
+        .btn-primary { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; }
+        .btn-primary:hover { background: #0056b3; }
+        .client-appt-card { padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8f9fa; border: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; }
+        .status-badge { padding: 5px 10px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
+        .status-confirmed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
     </style>
 </head>
 <body>
     <div class="header-container">
-        <h1>DASHBOARD</h1>
-        <form action="{% url 'logout' %}" method="post">
+        <h1 style="margin: 0;">DASHBOARD</h1>
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
             {% csrf_token %}
-            <button type="submit" style="padding: 8px 16px; cursor: pointer;">Log Out</button>
+            <button type="submit" style="padding: 8px 16px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: white;">Log Out</button>
         </form>
     </div>
-    
-    <hr>
     
     {% if request.user.is_staff %}
         
@@ -46,7 +50,9 @@
                     <div class="pending-card">
                         <div>
                             <strong style="font-size: 1.1em;">
-                                <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #007bff; text-decoration: none;">{{ appt.horse.name }}</a>
+                                <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #007bff; text-decoration: none;">
+                                    {{ appt.horse.name }} ({{ appt.horse.owner.first_name }} {{ appt.horse.owner.last_name }})
+                                </a>
                             </strong>
                             <p style="margin: 5px 0 0 0; color: #555;">
                                 {{ appt.date_and_time|date:"F d, Y - g:i A" }}
@@ -86,15 +92,49 @@
     {% else %}
 
         <div class="client-portal">
-            <h2>Welcome to the Portal!</h2>
-            <p style="color: #555; font-size: 1.1em;">You can request a new osteopathy assessment for your horse below.</p>
-            
-            <a href="{% url 'request_appointment' %}" class="btn-large">
-                Request an Appointment
-            </a>
+            <div class="portal-header">
+                <h2 style="margin: 0; color: #333;">My Appointments</h2>
+                <a href="{% url 'request_appointment' %}" class="btn-primary">+ Request Appointment</a>
+            </div>
+
+            {% if client_appointments %}
+                {% for appt in client_appointments %}
+                    <div class="client-appt-card" style="border-left: 4px solid {% if appt.status == 'Confirmed' %}#28a745{% else %}#ffc107{% endif %};">
+                        
+                        <div>
+                            <h3 style="margin: 0 0 5px 0;">
+                                <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #333; text-decoration: none;">
+                                    {{ appt.horse.name }}
+                                </a>
+                            </h3>
+                            <p style="margin: 0; color: #666;">
+                                {{ appt.date_and_time|date:"l, F j, Y" }} at {{ appt.date_and_time|date:"g:i A" }}
+                                <br>
+                                <small>Practitioner: {{ appt.practitioner.first_name|default:appt.practitioner.username }}</small>
+                            </p>
+                            
+                            <a href="{% url 'horse_detail' appt.horse.id %}" style="display: inline-block; margin-top: 10px; font-size: 0.9em; color: #007bff; text-decoration: none;">
+                                View Horse Records &rarr;
+                            </a>
+                        </div>
+
+                        <div>
+                            {% if appt.status == 'Confirmed' %}
+                                <span class="status-badge status-confirmed">Confirmed</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 40px 0;">
+                    <p style="color: #666; font-size: 1.1em;">You don't have any appointments scheduled yet.</p>
+                </div>
+            {% endif %}
         </div>
 
     {% endif %}
-
 </body>
 </html>

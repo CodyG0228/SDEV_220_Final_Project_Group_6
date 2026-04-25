@@ -11,7 +11,14 @@ def dashboard_view(request):
         pending_requests = Appointment.objects.filter(status='Pending', practitioner=request.user).order_by('date_and_time')
         return render(request, 'home.html', {'pending_requests': pending_requests})
     else:
-        return render(request, 'home.html')
+        client_profile = getattr(request.user, 'client', None)
+        
+        if client_profile:
+            client_appointments = Appointment.objects.filter(horse__owner=client_profile).order_by('-date_and_time')
+        else:
+            client_appointments = []
+            
+        return render(request, 'home.html', {'client_appointments': client_appointments})
 
 def approve_appointment(request, pk):
     if request.method == 'POST':
