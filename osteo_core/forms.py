@@ -14,3 +14,14 @@ class AppointmentRequestForm(forms.ModelForm):
 
         if client:
             self.fields['horse'].queryset = Horse.objects.filter(owner=client)
+
+class HorseForm(forms.ModelForm):
+    class Meta:
+        model = Horse
+        # Notice we DO NOT include 'owner' here. The user shouldn't pick the owner; we will force it in the view!
+        fields = ['name', 'breed', 'age']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'breed': forms.TextInput(attrs={'class': 'form-control'}),
+            'age': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

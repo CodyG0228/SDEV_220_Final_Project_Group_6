@@ -14,4 +14,5 @@ urlpatterns = [
     path('appointment/<int:pk>/assessment/new/', osteo_views.create_assessment, name='create_assessment'),
     path('request-appointment/', osteo_views.request_appointment, name='request_appointment'),
     path('request-success/', TemplateView.as_view(template_name='request_success.html'), name='request_success'),
+    path('add-horse/', osteo_views.add_horse, name='add_horse'),
 ]

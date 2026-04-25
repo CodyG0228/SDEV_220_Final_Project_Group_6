@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from datetime import timedelta
 from .models import Appointment, Horse, Assessment
-from .forms import AppointmentRequestForm
+from .forms import AppointmentRequestForm, HorseForm
 
 def dashboard_view(request):
     if request.user.is_staff:
@@ -71,9 +71,7 @@ def create_assessment(request, pk):
             assessment_dict = json.loads(raw_json_string)
         except json.JSONDecodeError:
             assessment_dict = {}
-            
         notes = request.POST.get('general_notes', '')
-
         Assessment.objects.create(
             appointment=appointment,
             horse=appointment.horse,
@@ -84,3 +82,20 @@ def create_assessment(request, pk):
         return redirect('horse_detail', pk=appointment.horse.pk)
 
     return render(request, 'assessment_form.html', {'appointment': appointment})
+
+def add_horse(request):
+    current_client = getattr(request.user, 'client', None)
+    if not current_client:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = HorseForm(request.POST)
+        if form.is_valid():
+            new_horse = form.save(commit=False)
+            new_horse.owner = current_client
+            new_horse.save()
+            return redirect('home')
+    else:
+        form = HorseForm()
+
+    return render(request, 'add_horse.html', {'form': form})

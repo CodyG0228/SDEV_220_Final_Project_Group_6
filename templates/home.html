@@ -94,7 +94,10 @@
         <div class="client-portal">
             <div class="portal-header">
                 <h2 style="margin: 0; color: #333;">My Appointments</h2>
-                <a href="{% url 'request_appointment' %}" class="btn-primary">+ Request Appointment</a>
+                <div>
+                    <a href="{% url 'add_horse' %}" class="btn-primary" style="background: #28a745; margin-right: 10px;">+ Add Horse</a>
+                    <a href="{% url 'request_appointment' %}" class="btn-primary">+ Request Appointment</a>
+                </div>
             </div>
 
             {% if client_appointments %}

@@ -44,7 +44,7 @@
                             
                             {% for region, findings in appt.assessment.assessment_data.items %}
                                 <p style="margin: 5px 0;">
-                                    <strong class="region-title">{{ region|replace:"_"|title }}:</strong> 
+                                    <strong class="region-title">{{ region|title }}:</strong> 
                                     {{ findings|join:", " }}
                                 </p>
                             {% endfor %}
