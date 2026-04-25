@@ -110,7 +110,7 @@
                             <p style="margin: 0; color: #666;">
                                 {{ appt.date_and_time|date:"l, F j, Y" }} at {{ appt.date_and_time|date:"g:i A" }}
                                 <br>
-                                <small>Practitioner: {{ appt.practitioner.first_name|default:appt.practitioner.username }}</small>
+                                <small>Practitioner: {% if appt.practitioner %}{{ appt.practitioner.first_name|default:appt.practitioner.username }}{% else %}Unassigned{% endif %}</small>
                             </p>
                             
                             <a href="{% url 'horse_detail' appt.horse.id %}" style="display: inline-block; margin-top: 10px; font-size: 0.9em; color: #007bff; text-decoration: none;">
