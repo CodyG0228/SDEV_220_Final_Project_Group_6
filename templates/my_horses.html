@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Horses</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .horse-card { padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-edit { background: #ffc107; color: #333; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #17a2b8; padding-bottom: 15px; margin-bottom: 20px;">
+            <h2 style="margin: 0; color: #333;">My Horses</h2>
+            <a href="{% url 'add_horse' %}" class="btn-edit" style="background: #28a745; color: white;">+ Add New</a>
+        </div>
+
+        {% for horse in horses %}
+            <div class="horse-card">
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">{{ horse.name }}</h3>
+                    <p style="margin: 0; color: #666;">Breed: {{ horse.breed|default:"N/A" }} | Age: {{ horse.age|default:"N/A" }}</p>
+                </div>
+                <a href="{% url 'edit_horse' horse.id %}" class="btn-edit">✏️ Edit</a>
+            </div>
+        {% empty %}
+            <p style="text-align: center; color: #666;">You haven't added any horses yet.</p>
+        {% endfor %}
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'home' %}" style="color: #666; text-decoration: none;">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

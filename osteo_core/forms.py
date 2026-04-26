@@ -1,5 +1,5 @@
 from django import forms
-from .models import Appointment, Horse
+from .models import Appointment, Horse, Profile
 
 class AppointmentRequestForm(forms.ModelForm):
     class Meta:
@@ -24,4 +24,13 @@ class HorseForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'breed': forms.TextInput(attrs={'class': 'form-control'}),
             'age': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+        
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile_picture', 'phone_number', 'location']
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 555-5555'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City, State'}),
         }

@@ -17,6 +17,10 @@ urlpatterns = [
     path('request-appointment/', osteo_views.request_appointment, name='request_appointment'),
     path('request-success/', TemplateView.as_view(template_name='request_success.html'), name='request_success'),
     path('add-horse/', osteo_views.add_horse, name='add_horse'),
+    path('profile/', osteo_views.edit_profile, name='edit_profile'),
+    path('my-horses/', osteo_views.my_horses, name='my_horses'),
+    path('horse/<int:pk>/edit/', osteo_views.edit_horse, name='edit_horse'),
+    path('assessment/<int:pk>/edit/', osteo_views.edit_assessment, name='edit_assessment'),
 ]
 
 if settings.DEBUG:

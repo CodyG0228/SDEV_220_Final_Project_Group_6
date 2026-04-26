@@ -53,15 +53,26 @@
                                 <hr style="border: 0.5px dashed #ccc; margin: 10px 0;">
                                 <p style="margin: 0;"><strong>Notes:</strong> {{ appt.assessment.general_notes }}</p>
                             {% endif %}
+                            
+                            {% if request.user.is_staff %}
+                                <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                    <a href="{% url 'edit_assessment' appt.assessment.id %}" class="btn-small" style="background: #ffc107; color: #333; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-weight: bold;">
+                                         Edit Assessment
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
 
                     {% elif appt.status == 'Confirmed' %}
                         
                         {% if request.user.is_staff %}
-                            <div style="margin-top: 10px;">
-                                <a href="{% url 'create_assessment' appt.id %}" class="btn-small">📝 Create Assessment</a>
+                            <div style="margin-top: 15px;">
+                                <a href="{% url 'create_assessment' appt.id %}" class="btn-small">
+                                     Create Assessment
+                                </a>
                             </div>
                         {% endif %}
+                        
                     {% endif %}
                     
                 </div>
