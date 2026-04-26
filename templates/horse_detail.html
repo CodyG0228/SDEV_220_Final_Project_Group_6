@@ -56,9 +56,12 @@
                         </div>
 
                     {% elif appt.status == 'Confirmed' %}
-                        <div style="margin-top: 10px;">
-                            <a href="{% url 'create_assessment' appt.id %}" class="btn-small">📝 Create Assessment</a>
-                        </div>
+                        
+                        {% if request.user.is_staff %}
+                            <div style="margin-top: 10px;">
+                                <a href="{% url 'create_assessment' appt.id %}" class="btn-small">📝 Create Assessment</a>
+                            </div>
+                        {% endif %}
                     {% endif %}
                     
                 </div>

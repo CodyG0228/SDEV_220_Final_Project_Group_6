@@ -36,7 +36,8 @@ def appointment_api(request):
             'title': f"{appt.horse.name} ({appt.horse.owner.first_name})",
             'start': appt.date_and_time.isoformat(), 
             'end': (appt.date_and_time + timedelta(hours=1)).isoformat(), 
-            'color': '#28a745'
+            'color': '#28a745',
+            'url': f'/horse/{appt.horse.id}/',
         })
     return JsonResponse(events, safe=False)
 
@@ -59,6 +60,9 @@ def horse_detail(request, pk):
     return render(request, 'horse_detail.html', {'horse': horse, 'appointments': appointments})
 
 def create_assessment(request, pk):
+    if not request.user.is_staff:
+        return redirect('home')
+    
     appointment = get_object_or_404(Appointment, pk=pk)
 
     if hasattr(appointment, 'assessment'):
