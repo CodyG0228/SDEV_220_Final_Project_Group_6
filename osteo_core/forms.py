@@ -1,5 +1,8 @@
 from django import forms
-from .models import Appointment, Horse, Profile
+from .models import Appointment, Horse, Profile, Client
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class AppointmentRequestForm(forms.ModelForm):
     class Meta:
@@ -18,7 +21,6 @@ class AppointmentRequestForm(forms.ModelForm):
 class HorseForm(forms.ModelForm):
     class Meta:
         model = Horse
-        # Notice we DO NOT include 'owner' here. The user shouldn't pick the owner; we will force it in the view!
         fields = ['name', 'breed', 'age']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -33,4 +35,22 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 555-5555'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City, State'}),
+        }
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+class ClientForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['phone_number', 'address']
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 555-5555'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City, State'}),
         }

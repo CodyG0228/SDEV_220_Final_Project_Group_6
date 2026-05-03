@@ -25,9 +25,14 @@
     </style>
 </head>
 <body>
-    <div class="header-container">
+<div class="header-container">
         <h1 style="margin: 0;">DASHBOARD</h1>
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 15px; align-items: center;">
+            
+            <span style="font-size: 1.1em; font-weight: bold; color: #333;">
+                Welcome, {{ request.user.first_name|default:request.user.username }}!
+            </span>
+
             {% if request.user.is_staff %}
                 <a href="{% url 'edit_profile' %}" style="padding: 8px 16px; text-decoration: none; border-radius: 4px; border: 1px solid #007bff; color: #007bff; font-weight: bold;">⚙️ Edit Profile</a>
             {% endif %}

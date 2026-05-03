@@ -3,9 +3,8 @@ import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from datetime import timedelta
-from .models import Appointment, Horse, Assessment, Profile
-from .forms import AppointmentRequestForm, HorseForm, ProfileForm
-
+from .models import Appointment, Horse, Assessment, Profile, Client
+from .forms import AppointmentRequestForm, HorseForm, ProfileForm, UserEditForm, ClientForm
 def dashboard_view(request):
     if request.user.is_staff:
         pending_requests = Appointment.objects.filter(status='Pending', practitioner=request.user).order_by('date_and_time')
@@ -108,17 +107,31 @@ def add_horse(request):
 def edit_profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    client, created = Client.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email
+        }
+    )
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            form.save()
+        user_form = UserEditForm(request.POST, instance=request.user)
+        client_form = ClientForm(request.POST, instance=client)
+        
+        if user_form.is_valid() and client_form.is_valid():
+            user_form.save()
+            
+            client.first_name = user_form.cleaned_data['first_name']
+            client.last_name = user_form.cleaned_data['last_name']
+            client_form.save()
+            
             return redirect('home')
     else:
-        form = ProfileForm(instance=profile)
-
-    return render(request, 'profile.html', {'form': form, 'profile': profile})
+        user_form = UserEditForm(instance=request.user)
+        client_form = ClientForm(instance=client)
+    return render(request, 'profile.html', {'user_form': user_form, 'client_form': client_form})
 
 def my_horses(request):
     current_client = getattr(request.user, 'client', None)
