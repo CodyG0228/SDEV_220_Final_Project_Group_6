@@ -13,8 +13,8 @@
         body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f7f6; }
         .header-container { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .dashboard-container { display: flex; gap: 30px; margin-top: 20px; align-items: flex-start; }
-        .calendar-section { flex: 3; width: 100%; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .sidebar { flex: 1; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .calendar-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .sidebar { background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .pending-card { background: #fafafa; padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #ffc107; display: flex; justify-content: space-between; align-items: center; border-right: 1px solid #eee; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
         
         .client-appt-card { padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #f8f9fa; border: 1px solid #e9ecef; display: flex; justify-content: space-between; align-items: center; }
@@ -25,7 +25,7 @@
     </style>
 </head>
 <body>
-<div class="header-container">
+    <div class="header-container">
         <h1 style="margin: 0;">DASHBOARD</h1>
         <div style="display: flex; gap: 15px; align-items: center;">
             
@@ -33,9 +33,6 @@
                 Welcome, {{ request.user.first_name|default:request.user.username }}!
             </span>
 
-            {% if request.user.is_staff %}
-                <a href="{% url 'edit_profile' %}" style="padding: 8px 16px; text-decoration: none; border-radius: 4px; border: 1px solid #007bff; color: #007bff; font-weight: bold;">⚙️ Edit Profile</a>
-            {% endif %}
             <form action="{% url 'logout' %}" method="post" style="margin: 0;">
                 {% csrf_token %}
                 <button type="submit" style="padding: 8px 16px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: white;">Log Out</button>
@@ -43,93 +40,98 @@
         </div>
     </div>
     
-    {% if request.user.is_staff %}
-        <div class="dashboard-container">
-            <div class="calendar-section" style="flex: 2;">
-                <div id='calendar'></div>
-            </div>
-            <div class="sidebar">
-                <h2 style="margin-top: 0; color: #333;">Pending Requests</h2>
-                {% for appt in pending_requests %}
-                    <div class="pending-card">
-                        <div>
-                            <strong style="font-size: 1.1em;">
-                                <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #007bff; text-decoration: none;">
-                                    {{ appt.horse.name }} ({{ appt.horse.owner.first_name }} {{ appt.horse.owner.last_name }})
-                                </a>
-                            </strong>
-                            <p style="margin: 5px 0 0 0; color: #555;">
-                                {{ appt.date_and_time|date:"F d, Y - g:i A" }}<br>
-                                <small>Reason: {{ appt.reason_for_visit|default:"None provided" }}</small>
-                            </p>
-                        </div>
-                        <form action="{% url 'approve_appointment' appt.id %}" method="post" style="margin: 0;">
-                            {% csrf_token %}
-                            <button type="submit" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">✓ Approve</button>
-                        </form>
-                    </div>
-                {% empty %}
-                    <p style="color: #666; font-style: italic;">No pending appointment requests.</p>
-                {% endfor %}
-            </div>
+    <div class="dashboard-container">
+        
+        <div class="sidebar" style="width: 220px; flex-shrink: 0;">
+            <h3 style="margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; color: #333;">Main Menu</h3>
+            <a href="{% url 'home' %}" class="sidebar-btn" style="background: #6c757d;">🏠 Dashboard</a>
+            <a href="{% url 'my_horses' %}" class="sidebar-btn" style="background: #17a2b8;">🐴 My Horses</a>
+            <a href="{% url 'add_horse' %}" class="sidebar-btn" style="background: #28a745;">+ Add Horse</a>
+            <a href="{% url 'request_appointment' %}" class="sidebar-btn" style="background: #007bff;">📅 Request Appt</a>
+            <a href="{% url 'edit_profile' %}" class="sidebar-btn" style="background: #ffc107; color: #333; margin-top: 20px;">⚙️ Edit Profile</a>
         </div>
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-              initialView: 'timeGridWeek',
-              headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-              events: '{% url "appointment_api" %}'
-            });
-            calendar.render();
-          });
-        </script>
 
-    {% else %}
-        <div class="dashboard-container">
-            
-            <div class="sidebar">
-                <h3 style="margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; color: #333;">Client Menu</h3>
-                <a href="{% url 'home' %}" class="sidebar-btn" style="background: #6c757d;">🏠 Dashboard</a>
-                <a href="{% url 'my_horses' %}" class="sidebar-btn" style="background: #17a2b8;">🐴 My Horses</a>
-                <a href="{% url 'add_horse' %}" class="sidebar-btn" style="background: #28a745;">+ Add Horse</a>
-                <a href="{% url 'request_appointment' %}" class="sidebar-btn" style="background: #007bff;">📅 Request Appointment</a>
-                <a href="{% url 'edit_profile' %}" class="sidebar-btn" style="background: #ffc107; color: #333;">⚙️ Edit Profile</a>
-            </div>
+        <div style="flex-grow: 1; display: flex; gap: 30px; align-items: flex-start; width: 100%;">
 
-            <div class="calendar-section">
-                <h2 style="margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 15px;">My Appointments</h2>
+            {% if request.user.is_staff %}
                 
-                {% if client_appointments %}
-                    {% for appt in client_appointments %}
-                        <div class="client-appt-card" style="border-left: 4px solid {% if appt.status == 'Confirmed' %}#28a745{% else %}#ffc107{% endif %};">
+                <div class="calendar-section" style="flex: 2; width: 100%;">
+                    <div id='calendar'></div>
+                </div>
+                <div class="sidebar" style="flex: 1; width: 100%;">
+                    <h2 style="margin-top: 0; color: #333;">Pending Requests</h2>
+                    {% for appt in pending_requests %}
+                        <div class="pending-card">
                             <div>
-                                <h3 style="margin: 0 0 5px 0;">
-                                    <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #333; text-decoration: none;">{{ appt.horse.name }}</a>
-                                </h3>
-                                <p style="margin: 0; color: #666;">
-                                    {{ appt.date_and_time|date:"l, F j, Y" }} at {{ appt.date_and_time|date:"g:i A" }}<br>
-                                    <small>Practitioner: {% if appt.practitioner %}{{ appt.practitioner.first_name|default:appt.practitioner.username }}{% else %}Unassigned{% endif %}</small>
+                                <strong style="font-size: 1.1em;">
+                                    <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #007bff; text-decoration: none;">
+                                        {{ appt.horse.name }} ({{ appt.horse.owner.first_name }} {{ appt.horse.owner.last_name }})
+                                    </a>
+                                </strong>
+                                <p style="margin: 5px 0 0 0; color: #555;">
+                                    {{ appt.date_and_time|date:"F d, Y - g:i A" }}<br>
+                                    <small>Reason: {{ appt.reason_for_visit|default:"None provided" }}</small>
                                 </p>
-                                <a href="{% url 'horse_detail' appt.horse.id %}" style="display: inline-block; margin-top: 10px; font-size: 0.9em; color: #007bff; text-decoration: none;">View Horse Records &rarr;</a>
                             </div>
-                            <div>
-                                {% if appt.status == 'Confirmed' %}
-                                    <span class="status-badge status-confirmed">Confirmed</span>
-                                {% else %}
-                                    <span class="status-badge status-pending">Pending</span>
-                                {% endif %}
-                            </div>
+                            <form action="{% url 'approve_appointment' appt.id %}" method="post" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">✓ Approve</button>
+                            </form>
                         </div>
+                    {% empty %}
+                        <p style="color: #666; font-style: italic;">No pending appointment requests.</p>
                     {% endfor %}
-                {% else %}
-                    <div style="text-align: center; padding: 40px 0;">
-                        <p style="color: #666; font-size: 1.1em;">You don't have any appointments scheduled yet.</p>
-                    </div>
-                {% endif %}
-            </div>
+                </div>
+                
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                      initialView: 'timeGridWeek',
+                      headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+                      events: '{% url "appointment_api" %}'
+                    });
+                    calendar.render();
+                  });
+                </script>
+
+            {% else %}
+                
+                <div class="calendar-section" style="flex: 1; width: 100%;">
+                    <h2 style="margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 15px;">My Appointments</h2>
+                    
+                    {% if client_appointments %}
+                        {% for appt in client_appointments %}
+                            <div class="client-appt-card" style="border-left: 4px solid {% if appt.status == 'Confirmed' %}#28a745{% else %}#ffc107{% endif %};">
+                                <div>
+                                    <h3 style="margin: 0 0 5px 0;">
+                                        <a href="{% url 'horse_detail' appt.horse.id %}" style="color: #333; text-decoration: none;">{{ appt.horse.name }}</a>
+                                    </h3>
+                                    <p style="margin: 0; color: #666;">
+                                        {{ appt.date_and_time|date:"l, F j, Y" }} at {{ appt.date_and_time|date:"g:i A" }}<br>
+                                        <small>Practitioner: {% if appt.practitioner %}{{ appt.practitioner.first_name|default:appt.practitioner.username }}{% else %}Unassigned{% endif %}</small>
+                                    </p>
+                                    <a href="{% url 'horse_detail' appt.horse.id %}" style="display: inline-block; margin-top: 10px; font-size: 0.9em; color: #007bff; text-decoration: none;">View Horse Records &rarr;</a>
+                                </div>
+                                <div>
+                                    {% if appt.status == 'Confirmed' %}
+                                        <span class="status-badge status-confirmed">Confirmed</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">Pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="text-align: center; padding: 40px 0;">
+                            <p style="color: #666; font-size: 1.1em;">You don't have any appointments scheduled yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            {% endif %}
 
         </div>
-    {% endif %}
+    </div>
 </body>
 </html>

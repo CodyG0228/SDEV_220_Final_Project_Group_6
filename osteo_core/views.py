@@ -6,18 +6,18 @@ from datetime import timedelta
 from .models import Appointment, Horse, Assessment, Profile, Client
 from .forms import AppointmentRequestForm, HorseForm, ProfileForm, UserEditForm, ClientForm
 def dashboard_view(request):
-    if request.user.is_staff:
-        pending_requests = Appointment.objects.filter(status='Pending', practitioner=request.user).order_by('date_and_time')
-        return render(request, 'home.html', {'pending_requests': pending_requests})
+    context = {}
+
+    client_profile = getattr(request.user, 'client', None)
+    if client_profile:
+        context['client_appointments'] = Appointment.objects.filter(horse__owner=client_profile).order_by('-date_and_time')
     else:
-        client_profile = getattr(request.user, 'client', None)
-        
-        if client_profile:
-            client_appointments = Appointment.objects.filter(horse__owner=client_profile).order_by('-date_and_time')
-        else:
-            client_appointments = []
-            
-        return render(request, 'home.html', {'client_appointments': client_appointments})
+        context['client_appointments'] = []
+
+    if request.user.is_staff:
+        context['pending_requests'] = Appointment.objects.filter(status='Pending', practitioner=request.user).order_by('date_and_time')
+
+    return render(request, 'home.html', context)
 
 def approve_appointment(request, pk):
     if request.method == 'POST':
