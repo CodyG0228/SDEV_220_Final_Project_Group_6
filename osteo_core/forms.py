@@ -17,6 +17,7 @@ class AppointmentRequestForm(forms.ModelForm):
 
         if client:
             self.fields['horse'].queryset = Horse.objects.filter(owner=client)
+        self.fields['practitioner'].label_from_instance = lambda obj: f"{obj.first_name} {obj.last_name}".strip() or obj.username
 
 class HorseForm(forms.ModelForm):
     class Meta:
