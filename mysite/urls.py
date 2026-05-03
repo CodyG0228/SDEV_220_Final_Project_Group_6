@@ -10,7 +10,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('users.urls')),
     path('api/appointments/', osteo_views.appointment_api, name='appointment_api'),
-    path('', osteo_views.dashboard_view, name='home'),
     path('horse/<int:pk>/', osteo_views.horse_detail, name='horse_detail'),
     path('appointment/<int:pk>/approve/', osteo_views.approve_appointment, name='approve_appointment'),
     path('appointment/<int:pk>/assessment/new/', osteo_views.create_assessment, name='create_assessment'),
@@ -21,6 +20,8 @@ urlpatterns = [
     path('my-horses/', osteo_views.my_horses, name='my_horses'),
     path('horse/<int:pk>/edit/', osteo_views.edit_horse, name='edit_horse'),
     path('assessment/<int:pk>/edit/', osteo_views.edit_assessment, name='edit_assessment'),
+    path('', osteo_views.landing_page, name='landing'),
+    path('dashboard/', osteo_views.dashboard_view, name='home'),
 ]
 
 if settings.DEBUG:

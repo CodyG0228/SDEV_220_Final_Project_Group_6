@@ -167,3 +167,8 @@ def edit_assessment(request, pk):
         
         return redirect('horse_detail', pk=appointment.horse.pk)
     return render(request, 'assessment_form.html', {'appointment': appointment, 'assessment': assessment})
+
+def landing_page(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    return render(request, 'landing_page.html')
