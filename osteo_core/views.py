@@ -43,7 +43,8 @@ def appointment_api(request):
 
 def request_appointment(request):
     current_client = getattr(request.user, 'client', None)
-
+    if not current_client:
+        return redirect('edit_profile')
     if request.method == 'POST':
         form = AppointmentRequestForm(request.POST, client=current_client)
         if form.is_valid():
@@ -90,7 +91,7 @@ def create_assessment(request, pk):
 def add_horse(request):
     current_client = getattr(request.user, 'client', None)
     if not current_client:
-        return redirect('home')
+        return redirect('edit_profile')
 
     if request.method == 'POST':
         form = HorseForm(request.POST)
@@ -122,7 +123,7 @@ def edit_profile(request):
 def my_horses(request):
     current_client = getattr(request.user, 'client', None)
     if not current_client:
-        return redirect('home')
+        return redirect('edit_profile')
         
     horses = Horse.objects.filter(owner=current_client)
     return render(request, 'my_horses.html', {'horses': horses})
