@@ -186,3 +186,6 @@ def landing_page(request):
     if request.user.is_authenticated:
         return redirect('home')
     return render(request, 'landing_page.html')
+
+def about_page(request):
+    return render(request, 'about.html')

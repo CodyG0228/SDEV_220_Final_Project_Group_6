@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About the Developer - EquiSync</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 40px; }
+        .about-container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-top: 0; }
+        h2 { color: #555; margin-top: 30px; }
+        p { line-height: 1.6; color: #444; font-size: 1.1em; }
+        .tech-stack { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        .tech-badge { background: #e9ecef; padding: 8px 15px; border-radius: 20px; font-weight: bold; color: #333; font-size: 0.9em; }
+        .donation-box { background: #f8f9fa; border: 1px solid #ddd; padding: 25px; border-radius: 8px; text-align: center; margin-top: 40px; }
+        .btn-donate { background: #ffc107; color: #333; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block; margin-top: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.2s; }
+        .btn-donate:hover { background: #e0a800; }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <h1>About the Developer (Cody Gunter)</h1>
+        <p>Welcome and thank you for visiting EquiSync! I made this site entirely by myself. What started off as a final-project (for a friend) for a software development class at Ivy Tech Community College naturally turned into a full SaaS (software as a service) application.</p>
+        <p>If you have any comments, concerns, or any questions in general, feel free to reach out any time at (812)-512-1644, or my email at codyrg0228@gmail.com</p>
+        
+        <h2>What is running this site?</h2>
+        <p>EquiSync is being hosted on an AWS (Amazon Web Service) EC2 instance. Including a discrete PostgreSQL database, an Nginx reverse proxy routing traffic to a Gunicorn WSGI daemon, and Cloudflare DNS managing secure SSL encryption protocols. I've learned quite a bit of information making this site alone, and I hope to continue this trend.</p>
+        
+        <div class="tech-stack">
+            <span class="tech-badge">Python / Django</span>
+            <span class="tech-badge">PostgreSQL</span>
+            <span class="tech-badge">AWS EC2</span>
+            <span class="tech-badge">Nginx</span>
+            <span class="tech-badge">Gunicorn</span>
+            <span class="tech-badge">Cloudflare</span>
+        </div>
+
+        <div class="donation-box">
+            <h3 style="margin-top: 0;">Support the Project</h3>
+            <p>If you enjoy this service and would like to support server costs and development, you can buy me a coffee below!</p>
+            <a href="https://paypal.me/pup2897?locale.x=en_US&country.x=US" target="_blank" class="btn-donate">☕ Support the Developer</a>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="{% url 'landing' %}" style="color: #007bff; text-decoration: none; font-weight: bold;">&larr; Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

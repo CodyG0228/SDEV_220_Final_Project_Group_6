@@ -20,6 +20,7 @@ urlpatterns = [
     path('my-horses/', osteo_views.my_horses, name='my_horses'),
     path('horse/<int:pk>/edit/', osteo_views.edit_horse, name='edit_horse'),
     path('assessment/<int:pk>/edit/', osteo_views.edit_assessment, name='edit_assessment'),
+    path('about/', osteo_views.about_page, name='about'),
     path('', osteo_views.landing_page, name='landing'),
     path('dashboard/', osteo_views.dashboard_view, name='home'),
 ]
