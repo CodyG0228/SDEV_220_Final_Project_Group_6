@@ -3,9 +3,23 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
+    is_practitoner = forms.BooleanField(
+        required=False,
+        label="Are you a practitioner?",
+        help_text="Check this box if you provide services and manage clients/horses."
+    )
+
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if self.cleaned_data.get('is_practitioner'):
+            user.is_staff = True
+        if commit:
+            user.save()
+        return user
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
