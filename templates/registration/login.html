@@ -9,14 +9,18 @@
     <title>EquiSync Login</title>
 </head>
 <body>
-    <h2>Log In</h2>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Log In</button>
-    </form>
-    <p>Need an account? <a href="{% url 'signup' %}">Sign up here!</a></p>
     
+    <div class="login-card">
+        <h2>Log In</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Log In</button>
+        </form>
+        
+        <p>Need an account? <a href="{% url 'signup' %}">Sign up here!</a></p>
+    </div>
+
 </body>
 </html>
